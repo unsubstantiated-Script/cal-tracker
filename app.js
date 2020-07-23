@@ -1,3 +1,47 @@
+//Storage Controller
+const StorageCtrl = (function () {
+
+
+    //Public Methods
+    return {
+        storeItem: function (item) {
+            let items
+
+            //Check to see if any items? 
+            if (localStorage.getItem('items') === null) {
+                items = []
+                //Push new item
+                items.push(item)
+
+                //Set ls
+                localStorage.setItem('items', JSON.stringify(items))
+            } else {
+                //Get what is already in ls
+                items = JSON.parse(localStorage.getItem('items'))
+
+                //Push new item
+                items.push(item)
+
+                //Reset ls
+                localStorage.setItem('items', JSON.stringify(items))
+            }
+        },
+
+        getItemsFromStorage: function () {
+            let items
+            if (localStorage.getItem('items') === null) {
+                items = []
+            } else {
+                items = JSON.parse(localStorage.getItem('items'))
+            }
+            return items
+        }
+
+    }
+})()
+
+
+
 //Item Controller
 const ItemCtrl = (function () {
 
@@ -12,21 +56,22 @@ const ItemCtrl = (function () {
 
     //Data Structure / State
     const data = {
-        items: [
-            //     {
-            //     id: 0,
-            //     name: 'Steak Dinner',
-            //     calories: '1200'
-            // }, {
-            //     id: 1,
-            //     name: 'Chicken ala King',
-            //     calories: '1500'
-            // }, {
-            //     id: 2,
-            //     name: 'Apple',
-            //     calories: '100'
-            // }
-        ],
+        // items: [
+        //     //     {
+        //     //     id: 0,
+        //     //     name: 'Steak Dinner',
+        //     //     calories: '1200'
+        //     // }, {
+        //     //     id: 1,
+        //     //     name: 'Chicken ala King',
+        //     //     calories: '1500'
+        //     // }, {
+        //     //     id: 2,
+        //     //     name: 'Apple',
+        //     //     calories: '100'
+        //     // }
+        // ],
+        items: StorageCtrl.getItemsFromStorage(),
         currentItem: null,
         totalCalories: 0
     }
@@ -279,7 +324,7 @@ const UICtrl = (function () {
 
 
 //App Controller
-const App = (function (ItemCtrl, UICtrl) {
+const App = (function (ItemCtrl, StorageCtrl, UICtrl) {
     //Load Event Listeners
     const loadEventListeners = function () {
         //Importing the UI selectors Obj
@@ -333,6 +378,10 @@ const App = (function (ItemCtrl, UICtrl) {
 
             //Add total calories to the UI
             UICtrl.showTotalCalories(totalCalories)
+
+
+            //Store in localStorage
+            StorageCtrl.storeItem(newItem)
 
             //Clear fields
             UICtrl.clearInput()
@@ -466,7 +515,7 @@ const App = (function (ItemCtrl, UICtrl) {
         }
     }
 
-})(ItemCtrl, UICtrl)
+})(ItemCtrl, StorageCtrl, UICtrl)
 
 
 
